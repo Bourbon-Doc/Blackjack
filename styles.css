@@ -18,12 +18,10 @@ body {
   font-family: Inter, system-ui, -apple-system, Segoe UI, sans-serif;
   background: linear-gradient(150deg, #0b1220, #111827 45%, #0f172a);
   color: var(--text);
-  max-width: 100%;
-  overflow-x: clip;
 }
 
 html {
-  max-width: 100%;
+  overflow-x: auto;
 }
 
 .app {
