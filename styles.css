@@ -155,6 +155,7 @@ button {
 .stats-grid > .mini-panel {
   flex: 0 0 130px;
   min-width: 130px;
+  max-width: 130px;
 }
 
 .stats-grid > .mini-panel {
@@ -366,8 +367,11 @@ button {
   margin: 0;
   font-size: .68rem;
   line-height: 1.2;
+  min-width: 0;
+  max-width: 100%;
   white-space: normal;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
+  word-break: break-word;
   text-align: center;
 }
 
