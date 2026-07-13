@@ -18,14 +18,10 @@ body {
   font-family: Inter, system-ui, -apple-system, Segoe UI, sans-serif;
   background: linear-gradient(150deg, #0b1220, #111827 45%, #0f172a);
   color: var(--text);
-  overflow-x: hidden;
-}
-
-html {
-  overflow-x: hidden;
 }
 
 .app {
+  width: 100%;
   max-width: 1380px;
   margin: 0 auto;
   padding: 1rem;
@@ -37,6 +33,13 @@ html {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: .75rem;
+}
+
+.top-header h1 {
+  margin: 0;
+  min-width: 0;
 }
 
 .header-actions {
