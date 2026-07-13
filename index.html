@@ -18,11 +18,31 @@
       </header>
 
       <section class="panel stats sticky-stats">
-        <div class="stat"><span class="stat-label"><span class="icon-badge">🧮</span>Running Count</span><strong id="runningCount">0</strong></div>
-        <div class="stat"><span class="stat-label"><span class="icon-badge">🎯</span>True Count</span><strong id="trueCount">0.00</strong></div>
-        <div class="stat"><span class="stat-label"><span class="icon-badge">🂠</span>Cards Remaining</span><strong id="cardsRemaining">312</strong></div>
-        <div class="stat"><span class="stat-label"><span class="icon-badge">🃏</span>Decks Remaining</span><strong id="decksRemaining">6.00</strong></div>
-        <div class="stat"><span class="stat-label"><span class="icon-badge">📉</span>Shoe Penetration</span><strong id="penetrationHeader">0.0%</strong></div>
+        <div class="stats-grid">
+          <div class="stat"><span class="stat-label"><span class="icon-badge">🧮</span>Running Count</span><strong id="runningCount">0</strong></div>
+          <div class="stat"><span class="stat-label"><span class="icon-badge">🎯</span>True Count</span><strong id="trueCount">0.00</strong></div>
+          <div class="stat"><span class="stat-label"><span class="icon-badge">🂠</span>Cards Remaining</span><strong id="cardsRemaining">312</strong></div>
+          <div class="stat"><span class="stat-label"><span class="icon-badge">🃏</span>Decks Remaining</span><strong id="decksRemaining">6.00</strong></div>
+          <div class="stat"><span class="stat-label"><span class="icon-badge">📉</span>Shoe Penetration</span><strong id="penetrationHeader">0.0%</strong></div>
+        </div>
+        <div class="header-indicators">
+          <div class="mini-panel">
+            <span class="mini-label"><span class="pretty-icon">🛡️</span>Insurance</span>
+            <p id="insuranceStatus"></p>
+          </div>
+          <div class="mini-panel">
+            <span class="mini-label"><span class="pretty-icon">🧭</span>Surrender</span>
+            <p id="surrenderStatus"></p>
+          </div>
+          <div class="mini-panel">
+            <span class="mini-label"><span class="pretty-icon">📘</span>Book Strategy</span>
+            <p id="bookStrategy"></p>
+          </div>
+          <div class="mini-panel">
+            <span class="mini-label"><span class="pretty-icon">🧠</span>Perfect Strategy</span>
+            <p id="perfectStrategy"></p>
+          </div>
+        </div>
       </section>
 
       <div class="layout">
@@ -55,31 +75,27 @@
         </aside>
 
         <div class="main-content">
-          <div class="insight-row">
-            <section class="panel indicators">
-              <h2>Indicators & Strategy</h2>
-              <p id="insuranceStatus"></p>
-              <p id="surrenderStatus"></p>
-              <div class="recommendations">
-                <div>
-                  <h3>Book Strategy</h3>
-                  <p id="bookStrategy"></p>
-                </div>
-                <div>
-                  <h3>Perfect Strategy</h3>
-                  <p id="perfectStrategy"></p>
-                </div>
+          <section class="panel side-bets">
+            <h2><span class="pretty-icon">🎲</span>Side Bet Tracker</h2>
+            <div class="side-bet-grid">
+              <div class="mini-panel">
+                <span class="mini-label"><span class="pretty-icon">🏆</span>Best Edge</span>
+                <p id="sideBetBest"></p>
               </div>
-            </section>
-
-            <section class="panel side-bets">
-              <h2>Side Bet Tracker</h2>
-              <p id="sideBetBest"></p>
-              <p id="pairSignal"></p>
-              <p id="rummySignal"></p>
-              <p id="luckySignal"></p>
-            </section>
-          </div>
+              <div class="mini-panel">
+                <span class="mini-label"><span class="pretty-icon">🂱</span>Pairs</span>
+                <p id="pairSignal"></p>
+              </div>
+              <div class="mini-panel">
+                <span class="mini-label"><span class="pretty-icon">🎴</span>Rummy</span>
+                <p id="rummySignal"></p>
+              </div>
+              <div class="mini-panel">
+                <span class="mini-label"><span class="pretty-icon">✨</span>Lucky Trinity</span>
+                <p id="luckySignal"></p>
+              </div>
+            </div>
+          </section>
 
           <section class="panel">
             <h2>Suit-Aware Card Tap</h2>

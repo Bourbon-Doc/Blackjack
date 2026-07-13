@@ -140,6 +140,11 @@ button {
 
 .stats {
   display: grid;
+  gap: .8rem;
+}
+
+.stats-grid {
+  display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: .75rem;
 }
@@ -248,10 +253,55 @@ button {
   gap: .75rem;
 }
 
-.insight-row {
+.header-indicators {
   display: grid;
-  grid-template-columns: 1.35fr 1fr;
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: .65rem;
+}
+
+.mini-panel {
+  border: 1px solid #475569;
+  border-radius: 10px;
+  padding: .6rem .7rem;
+  background: linear-gradient(145deg, #1b2638, #1d2b3f);
+}
+
+.mini-panel p {
+  margin: .35rem 0 0;
+}
+
+.mini-label {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  font-weight: 700;
+  color: #dbeafe;
+}
+
+.pretty-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.65rem;
+  height: 1.65rem;
+  border-radius: 999px;
+  font-size: .95rem;
+  background: radial-gradient(circle at 30% 20%, #7dd3fc, #38bdf8 45%, #0ea5e9 100%);
+  border: 1px solid #7dd3fc;
+  box-shadow: 0 0 0 1px rgba(125, 211, 252, .18), 0 3px 10px rgba(56, 189, 248, .25);
+}
+
+.side-bets h2 {
+  margin-top: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.side-bet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: .7rem;
 }
 
 #burnPile {
@@ -277,10 +327,6 @@ button {
 
   .sidebar {
     position: static;
-  }
-
-  .insight-row {
-    grid-template-columns: 1fr;
   }
 
   #quickSections {
