@@ -296,6 +296,7 @@ button {
 
 .mini-panel p {
   margin: .35rem 0 0;
+  font-size: .75rem;
 }
 
 .strategy-panel {
@@ -308,7 +309,7 @@ button {
 
 .strategy-value {
   margin-top: .45rem;
-  font-size: 1.45rem;
+  font-size: 1.0875rem;
   letter-spacing: .04em;
   font-weight: 800;
   text-transform: uppercase;
@@ -320,6 +321,7 @@ button {
   align-items: center;
   gap: .45rem;
   font-weight: 700;
+  font-size: .75rem;
   color: #dbeafe;
 }
 
