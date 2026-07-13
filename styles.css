@@ -168,6 +168,8 @@ button {
 
 .stats-grid > .mini-panel .mini-label {
   justify-content: center;
+  white-space: normal;
+  text-align: center;
 }
 
 .stat {
@@ -455,6 +457,12 @@ button {
   width: 1rem;
   height: 1rem;
   font-size: .62rem;
+}
+
+.stat-panel p {
+  font-size: .95rem;
+  font-weight: 700;
+  line-height: 1.1;
 }
 
 #burnPile {
