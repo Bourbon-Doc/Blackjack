@@ -222,6 +222,34 @@ button {
   background: #1b2638;
 }
 
+.quick-hand-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: .7rem;
+  align-items: center;
+  margin-bottom: .8rem;
+}
+
+.quick-hand-bar p {
+  margin: 0;
+  padding: .6rem .7rem;
+  border: 1px solid #475569;
+  border-radius: 10px;
+  background: #1b2638;
+  font-weight: 700;
+}
+
+.quick-hand-actions {
+  display: flex;
+  gap: .55rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.quick-hand-actions .action-btn {
+  min-width: 124px;
+}
+
 #quickSections {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -268,6 +296,23 @@ button {
 
 .mini-panel p {
   margin: .35rem 0 0;
+}
+
+.strategy-panel {
+  text-align: center;
+}
+
+.strategy-panel .mini-label {
+  justify-content: center;
+}
+
+.strategy-value {
+  margin-top: .45rem;
+  font-size: 1.45rem;
+  letter-spacing: .04em;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-family: "Orbitron", "Avenir Next", "Trebuchet MS", sans-serif;
 }
 
 .mini-label {
@@ -331,6 +376,14 @@ button {
 
   #quickSections {
     grid-template-columns: 1fr;
+  }
+
+  .quick-hand-bar {
+    grid-template-columns: 1fr;
+  }
+
+  .quick-hand-actions {
+    justify-content: flex-start;
   }
 }
 

@@ -8,6 +8,8 @@ const state = {
   cardsSeen: 0,
   burnPile: [],
   perCardRemaining: {},
+  playerHand: [],
+  dealerHand: [],
 };
 
 const els = {
@@ -27,6 +29,8 @@ const els = {
   sideBetBest: document.getElementById("sideBetBest"),
   bookStrategy: document.getElementById("bookStrategy"),
   perfectStrategy: document.getElementById("perfectStrategy"),
+  playerHandIndicator: document.getElementById("playerHandIndicator"),
+  dealerHandIndicator: document.getElementById("dealerHandIndicator"),
   cardGrid: document.getElementById("cardGrid"),
   quickSections: document.getElementById("quickSections"),
   rulesSidebar: document.getElementById("rulesSidebar"),
@@ -34,6 +38,8 @@ const els = {
   burnPile: document.getElementById("burnPile"),
   resetShoe: document.getElementById("resetShoe"),
   undoLastCard: document.getElementById("undoLastCard"),
+  undoQuickCard: document.getElementById("undoQuickCard"),
+  nextHand: document.getElementById("nextHand"),
   surrender: document.getElementById("surrender"),
   insuranceAllowed: document.getElementById("insuranceAllowed"),
   h17: document.getElementById("h17"),
@@ -51,6 +57,8 @@ function resetShoe() {
   state.runningCount = 0;
   state.cardsSeen = 0;
   state.burnPile = [];
+  state.playerHand = [];
+  state.dealerHand = [];
   state.perCardRemaining = {};
   for (const suit of SUIT_KEYS) {
     for (const rank of RANKS) {
@@ -76,6 +84,8 @@ function removeCard(rank, suitKey, source) {
   state.runningCount += HI_OPT_II[rank];
   state.cardsSeen += 1;
   state.burnPile.unshift({ key, source });
+  if (source === "Player Cards") state.playerHand.push(key);
+  if (source === "Dealer Cards") state.dealerHand.push(key);
   render();
 }
 
@@ -86,46 +96,129 @@ function undoLastCard() {
   state.perCardRemaining[lastCard.key] += 1;
   state.runningCount -= HI_OPT_II[rank];
   state.cardsSeen = Math.max(0, state.cardsSeen - 1);
+  if (lastCard.source === "Player Cards" && state.playerHand.length > 0) state.playerHand.pop();
+  if (lastCard.source === "Dealer Cards" && state.dealerHand.length > 0) state.dealerHand.pop();
   render();
 }
 
-function recommendStrategies(tc, penetrationPct) {
+function nextHand() {
+  state.playerHand = [];
+  state.dealerHand = [];
+  render();
+}
+
+function dealerUpcardValue() {
+  if (state.dealerHand.length === 0) return null;
+  const rank = state.dealerHand[0].slice(0, -1);
+  if (["10", "J", "Q", "K"].includes(rank)) return 10;
+  if (rank === "A") return 11;
+  return Number(rank);
+}
+
+function handSummary(cards) {
+  let total = 0;
+  let aces = 0;
+  for (const card of cards) {
+    const rank = card.slice(0, -1);
+    if (rank === "A") {
+      total += 1;
+      aces += 1;
+    } else if (["10", "J", "Q", "K"].includes(rank)) {
+      total += 10;
+    } else {
+      total += Number(rank);
+    }
+  }
+  let bestTotal = total;
+  let isSoft = false;
+  if (aces > 0 && total + 10 <= 21) {
+    bestTotal = total + 10;
+    isSoft = true;
+  }
+  const hardTotal = total;
+  const firstRank = cards[0]?.slice(0, -1);
+  const secondRank = cards[1]?.slice(0, -1);
+  const rankValue = (rank) => (rank === "A" ? 11 : ["10", "J", "Q", "K"].includes(rank) ? 10 : Number(rank));
+  const isPair = cards.length === 2 && firstRank && secondRank && rankValue(firstRank) === rankValue(secondRank);
+  const pairValue = isPair ? rankValue(firstRank) : null;
+  return { bestTotal, hardTotal, isSoft, isPair, pairValue, cards };
+}
+
+function recommendBookStrategy(tc) {
   const canSplit = Number(els.splitsAllowed.value) > 0;
   const canDouble = els.doubleAllowed.checked;
   const canSurrender = els.surrender.checked;
-  let bookAction = "Stand";
-  let perfectAction = "Stand";
-
-  if (tc <= -2 || penetrationPct < 35) {
-    bookAction = "Hit";
-  } else if (tc >= 3 && canSplit) {
-    bookAction = "Split";
-  } else if (tc >= 1 && canDouble) {
-    bookAction = "Double";
+  const dealerUp = dealerUpcardValue();
+  const summary = handSummary(state.playerHand);
+  if (state.playerHand.length === 0 || dealerUp === null) return "Waiting for player/dealer cards";
+  if (summary.bestTotal > 21) return "Bust";
+  if (summary.bestTotal === 21 && state.playerHand.length === 2) return "Stand (Blackjack)";
+  if (summary.isPair && canSplit) {
+    if ([11, 8].includes(summary.pairValue)) return "Split";
+    if (summary.pairValue === 9) return [7, 10, 11].includes(dealerUp) ? "Stand" : "Split";
+    if ([2, 3, 7].includes(summary.pairValue) && dealerUp >= 2 && dealerUp <= 7) return "Split";
+    if (summary.pairValue === 6 && dealerUp >= 2 && dealerUp <= 6) return "Split";
+    if (summary.pairValue === 4 && dealerUp >= 5 && dealerUp <= 6 && canDouble) return "Split";
   }
-
-  if (tc <= -3 || penetrationPct < 30) {
-    perfectAction = "Hit";
-  } else if (tc >= 4 && canSurrender) {
-    perfectAction = "Surrender";
-  } else if (tc >= 2 && canSplit) {
-    perfectAction = "Split";
-  } else if (tc >= 1 && canDouble) {
-    perfectAction = "Double";
+  if (summary.isSoft) {
+    if (summary.bestTotal >= 19) return "Stand";
+    if (summary.bestTotal === 18) {
+      if (canDouble && dealerUp >= 3 && dealerUp <= 6) return "Double";
+      return dealerUp >= 9 || dealerUp === 11 ? "Hit" : "Stand";
+    }
+    if (canDouble && summary.bestTotal >= 15 && summary.bestTotal <= 17 && dealerUp >= 4 && dealerUp <= 6) return "Double";
+    return "Hit";
   }
-
-  if (tc >= 5 && !canSplit && !canDouble) {
-    bookAction = "Stand";
-    perfectAction = canSurrender ? "Surrender" : "Stand";
+  if (summary.bestTotal >= 17) return "Stand";
+  if (summary.bestTotal >= 13 && summary.bestTotal <= 16) {
+    if (canSurrender && summary.bestTotal === 16 && [10, 11].includes(dealerUp)) return "Surrender";
+    return dealerUp >= 2 && dealerUp <= 6 ? "Stand" : "Hit";
   }
+  if (summary.bestTotal === 12) return dealerUp >= 4 && dealerUp <= 6 ? "Stand" : "Hit";
+  if (summary.bestTotal === 11) return canDouble ? "Double" : "Hit";
+  if (summary.bestTotal === 10) return canDouble && dealerUp <= 9 ? "Double" : "Hit";
+  if (summary.bestTotal === 9) return canDouble && dealerUp >= 3 && dealerUp <= 6 ? "Double" : "Hit";
+  return "Hit";
+}
 
-  if (tc <= -1 && !canDouble && !canSplit) {
-    bookAction = "Hit";
-    perfectAction = "Hit";
+function recommendPerfectStrategy(tc) {
+  const canDouble = els.doubleAllowed.checked;
+  const canSurrender = els.surrender.checked;
+  const dealerUp = dealerUpcardValue();
+  const summary = handSummary(state.playerHand);
+  if (state.playerHand.length === 0 || dealerUp === null) return "Waiting for player/dealer cards";
+  if (summary.bestTotal > 21) return "Bust";
+  if (summary.bestTotal === 21 && state.playerHand.length === 2) return "Stand (Blackjack)";
+  if (!summary.isSoft && !summary.isPair) {
+    if (summary.bestTotal === 16 && dealerUp === 10) {
+      if (canSurrender && tc >= 0) return "Surrender";
+      return tc >= 0 ? "Stand" : "Hit";
+    }
+    if (summary.bestTotal === 15 && dealerUp === 10) {
+      if (canSurrender && tc >= 4) return "Surrender";
+      return tc >= 4 ? "Stand" : "Hit";
+    }
+    if (summary.bestTotal === 12 && dealerUp === 3 && tc >= 2) return "Stand";
+    if (summary.bestTotal === 12 && dealerUp === 2 && tc >= 3) return "Stand";
+    if (summary.bestTotal === 10 && dealerUp === 10 && canDouble && tc >= 4) return "Double";
+    if (summary.bestTotal === 11 && dealerUp === 11 && canDouble && tc >= 1) return "Double";
   }
+  const baseline = recommendBookStrategy(tc);
+  if (baseline === "Hit" && tc <= -3 && summary.bestTotal >= 14 && !summary.isSoft) return "Hit";
+  return baseline;
+}
 
-  els.bookStrategy.textContent = bookAction;
-  els.perfectStrategy.textContent = perfectAction;
+function cardLabelFromKey(key) {
+  const rank = key.slice(0, -1);
+  const suit = SUITS[SUIT_KEYS.indexOf(key.slice(-1))];
+  return `${rank}${suit}`;
+}
+
+function formatHandIndicator(title, cards) {
+  if (cards.length === 0) return `${title}: —`;
+  const summary = handSummary(cards);
+  const cardsText = cards.map(cardLabelFromKey).join(" ");
+  return `${title}: ${cardsText} (${summary.bestTotal})`;
 }
 
 function toggleSidebar() {
@@ -188,6 +281,13 @@ function updateSignals() {
     els.surrenderStatus.className = "warn";
     els.surrenderStatus.textContent = "Surrender disabled in rules.";
   }
+
+  const bookAction = recommendBookStrategy(tc);
+  const perfectAction = recommendPerfectStrategy(tc);
+  els.bookStrategy.textContent = bookAction;
+  els.perfectStrategy.textContent = perfectAction;
+  els.playerHandIndicator.textContent = formatHandIndicator("Player", state.playerHand);
+  els.dealerHandIndicator.textContent = formatHandIndicator("Dealer", state.dealerHand);
 
   const rankTotals = Object.fromEntries(RANKS.map((r) => [r, 0]));
   for (const suit of SUIT_KEYS) {
@@ -258,7 +358,6 @@ function updateSignals() {
   const bestSideBet = sideBetProbabilities[0];
   els.sideBetBest.textContent = `Multi-count side-bet edge: ${bestSideBet.label} is highest right now at ${percent(bestSideBet.probability)}.`;
 
-  recommendStrategies(tc, penetrationPct);
 }
 
 function renderBurnPile() {
@@ -281,6 +380,7 @@ function renderCards() {
 
 function render() {
   els.undoLastCard.disabled = state.burnPile.length === 0;
+  if (els.undoQuickCard) els.undoQuickCard.disabled = state.burnPile.length === 0;
   renderCards();
   renderBurnPile();
   updateSignals();
@@ -357,6 +457,8 @@ createCardGrid();
 createQuickSections();
 els.resetShoe.addEventListener("click", resetShoe);
 els.undoLastCard.addEventListener("click", undoLastCard);
+if (els.undoQuickCard) els.undoQuickCard.addEventListener("click", undoLastCard);
+if (els.nextHand) els.nextHand.addEventListener("click", nextHand);
 els.toggleSidebar.addEventListener("click", toggleSidebar);
 ["deckCount", "penetrationAlert", "surrender", "insuranceAllowed", "h17", "das", "doubleAllowed", "payout", "splitsAllowed"].forEach((id) => {
   document.getElementById(id).addEventListener("change", () => {

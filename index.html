@@ -34,13 +34,13 @@
             <span class="mini-label"><span class="pretty-icon">🧭</span>Surrender</span>
             <p id="surrenderStatus"></p>
           </div>
-          <div class="mini-panel">
+          <div class="mini-panel strategy-panel">
             <span class="mini-label"><span class="pretty-icon">📘</span>Book Strategy</span>
-            <p id="bookStrategy"></p>
+            <p id="bookStrategy" class="strategy-value"></p>
           </div>
-          <div class="mini-panel">
+          <div class="mini-panel strategy-panel">
             <span class="mini-label"><span class="pretty-icon">🧠</span>Perfect Strategy</span>
-            <p id="perfectStrategy"></p>
+            <p id="perfectStrategy" class="strategy-value"></p>
           </div>
         </div>
       </section>
@@ -97,14 +97,22 @@
             </div>
           </section>
 
+          <section class="panel quick-sections">
+            <h2>Quick Tap Sections</h2>
+            <div class="quick-hand-bar">
+              <p id="playerHandIndicator"></p>
+              <p id="dealerHandIndicator"></p>
+              <div class="quick-hand-actions">
+                <button id="nextHand" type="button" class="action-btn">Next Hand</button>
+                <button id="undoQuickCard" type="button" class="action-btn">Undo Card</button>
+              </div>
+            </div>
+            <div id="quickSections"></div>
+          </section>
+
           <section class="panel">
             <h2>Suit-Aware Card Tap</h2>
             <div id="cardGrid" class="card-grid"></div>
-          </section>
-
-          <section class="panel quick-sections">
-            <h2>Quick Tap Sections</h2>
-            <div id="quickSections"></div>
           </section>
 
           <section class="panel burn">
