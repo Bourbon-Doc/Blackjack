@@ -21,14 +21,14 @@ body {
 }
 
 .app {
-  max-width: 1200px;
+  max-width: 1380px;
   margin: 0 auto;
   padding: 1rem;
   display: grid;
   gap: 1rem;
 }
 
-header {
+.top-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -46,9 +46,33 @@ header {
   padding: 1rem;
 }
 
+.layout {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(260px, 310px) minmax(0, 1fr);
+  align-items: start;
+}
+
+.main-content {
+  display: grid;
+  gap: 1rem;
+}
+
+.sidebar {
+  position: sticky;
+  top: 108px;
+}
+
+.sticky-stats {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(6px);
+}
+
 .rule-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: 1fr;
   gap: .75rem;
 }
 
@@ -94,13 +118,30 @@ button {
 
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
-  gap: .45rem;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: .75rem;
+}
+
+.suit-group {
+  border: 1px solid #475569;
+  border-radius: 12px;
+  padding: .65rem;
+  background: #1b2638;
+}
+
+.suit-group h3 {
+  margin: 0 0 .55rem 0;
+}
+
+.suit-cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: .35rem;
 }
 
 .card-btn {
   display: grid;
-  padding: .45rem;
+  padding: .5rem;
   gap: .15rem;
   text-align: center;
   border: 1px solid #475569;
@@ -112,18 +153,31 @@ button {
 
 .quick-wrap {
   display: grid;
-  gap: .5rem;
+  gap: .65rem;
   margin-bottom: .75rem;
+  border: 1px solid #475569;
+  border-radius: 10px;
+  padding: .75rem;
+  background: #1b2638;
 }
 
 .quick-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .35rem;
+  display: grid;
+  gap: .45rem;
+}
+
+.quick-row.suit-column {
+  grid-template-columns: 1fr;
+}
+
+.quick-row.rank-grid {
+  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
 }
 
 .quick-row button {
-  min-width: 42px;
+  min-height: 48px;
+  font-size: 1.1rem;
+  font-weight: 600;
 }
 
 .recommendations {
@@ -132,11 +186,31 @@ button {
   gap: .75rem;
 }
 
+.insight-row {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 1rem;
+}
+
 #burnPile {
   margin: 0;
   padding-left: 1.1rem;
   max-height: 260px;
   overflow: auto;
+}
+
+@media (max-width: 1040px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: static;
+  }
+
+  .insight-row {
+    grid-template-columns: 1fr;
+  }
 }
 
 .good { color: var(--good); }

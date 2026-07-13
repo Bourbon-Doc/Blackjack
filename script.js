@@ -226,6 +226,15 @@ function render() {
 function createCardGrid() {
   els.cardGrid.innerHTML = "";
   for (let s = 0; s < SUITS.length; s++) {
+    const group = document.createElement("div");
+    group.className = "suit-group";
+
+    const heading = document.createElement("h3");
+    heading.textContent = `Suit ${SUITS[s]}`;
+    group.append(heading);
+
+    const cards = document.createElement("div");
+    cards.className = "suit-cards";
     for (const rank of RANKS) {
       const key = `${rank}${SUIT_KEYS[s]}`;
       const button = document.createElement("button");
@@ -233,8 +242,10 @@ function createCardGrid() {
       button.dataset.key = key;
       button.innerHTML = `<strong>${rank}${SUITS[s]}</strong><small></small>`;
       button.addEventListener("click", () => removeCard(rank, SUIT_KEYS[s], "Suit Tap"));
-      els.cardGrid.append(button);
+      cards.append(button);
     }
+    group.append(cards);
+    els.cardGrid.append(group);
   }
 }
 
@@ -251,9 +262,9 @@ function createQuickSections() {
     wrapper.append(title);
 
     const suitRow = document.createElement("div");
-    suitRow.className = "quick-row";
+    suitRow.className = "quick-row suit-column";
     const rankRow = document.createElement("div");
-    rankRow.className = "quick-row";
+    rankRow.className = "quick-row rank-grid";
     let selectedSuit = "S";
 
     SUITS.forEach((suit, i) => {
