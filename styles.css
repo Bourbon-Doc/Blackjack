@@ -353,9 +353,11 @@ button {
 .mini-panel p {
   margin: 0;
   font-size: .68rem;
-  line-height: 1;
+  line-height: 1.2;
   margin-left: auto;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: right;
 }
 
 .strategy-panel {
