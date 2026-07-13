@@ -157,6 +157,18 @@ button {
   min-width: 130px;
 }
 
+.stats-grid > .mini-panel {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: .35rem;
+}
+
+.stats-grid > .mini-panel .mini-label {
+  justify-content: center;
+}
+
 .stat {
   background: var(--panel-alt);
   border-radius: 10px;
@@ -354,10 +366,9 @@ button {
   margin: 0;
   font-size: .68rem;
   line-height: 1.2;
-  margin-left: auto;
   white-space: normal;
   overflow-wrap: anywhere;
-  text-align: right;
+  text-align: center;
 }
 
 .strategy-panel {
