@@ -153,22 +153,25 @@ button {
 
 .stats-grid > .stat,
 .stats-grid > .mini-panel {
-  flex: 0 0 150px;
-  min-width: 150px;
+  flex: 0 0 130px;
+  min-width: 130px;
 }
 
 .stat {
   background: var(--panel-alt);
   border-radius: 10px;
   padding: .55rem;
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 74px;
 }
 
 .stat-label {
   display: inline-flex;
   align-items: center;
   gap: .3rem;
-  font-size: .8rem;
+  font-size: .72rem;
 }
 
 .icon-badge {
@@ -184,7 +187,7 @@ button {
 }
 
 .stat strong {
-  font-size: 1.05rem;
+  font-size: .95rem;
 }
 
 .card-grid {
@@ -335,17 +338,21 @@ button {
   border-radius: 10px;
   padding: .5rem .55rem;
   background: linear-gradient(145deg, #1b2638, #1d2b3f);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 74px;
 }
 
 .mini-panel p {
   margin: .35rem 0 0;
-  font-size: .75rem;
+  font-size: .68rem;
 }
 
 .strategy-panel {
   text-align: center;
-  min-width: 165px;
-  flex-basis: 165px;
+  min-width: 142px;
+  flex-basis: 142px;
 }
 
 .strategy-panel .mini-label {
@@ -354,7 +361,7 @@ button {
 
 .strategy-value {
   margin-top: .45rem;
-  font-size: 1.0875rem;
+  font-size: .92rem;
   letter-spacing: .04em;
   font-weight: 800;
   text-transform: uppercase;
@@ -364,9 +371,9 @@ button {
 .mini-label {
   display: inline-flex;
   align-items: center;
-  gap: .45rem;
+  gap: .3rem;
   font-weight: 700;
-  font-size: .75rem;
+  font-size: .68rem;
   color: #dbeafe;
 }
 
