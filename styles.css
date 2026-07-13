@@ -18,15 +18,16 @@ body {
   font-family: Inter, system-ui, -apple-system, Segoe UI, sans-serif;
   background: linear-gradient(150deg, #0b1220, #111827 45%, #0f172a);
   color: var(--text);
-  overflow-x: hidden;
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 html {
-  overflow-x: hidden;
+  max-width: 100%;
 }
 
 .app {
-  width: min(1380px, 100%);
+  width: 100%;
   max-width: 1380px;
   margin: 0 auto;
   padding: 1rem;
@@ -67,6 +68,7 @@ html {
   border: 1px solid #334155;
   border-radius: 12px;
   padding: 1rem;
+  min-width: 0;
 }
 
 .layout {
@@ -120,6 +122,7 @@ html {
 }
 
 .sticky-stats {
+  position: -webkit-sticky;
   position: sticky;
   top: 0;
   align-self: start;
@@ -165,6 +168,7 @@ button {
   gap: .55rem;
   flex-wrap: nowrap;
   overflow-x: auto;
+  max-width: 100%;
   padding-bottom: .2rem;
   scrollbar-width: thin;
 }
