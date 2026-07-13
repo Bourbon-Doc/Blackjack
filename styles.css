@@ -139,43 +139,52 @@ button {
 }
 
 .stats {
-  display: grid;
-  gap: .8rem;
+  display: block;
 }
 
 .stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: .75rem;
+  display: flex;
+  gap: .55rem;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: .2rem;
+  scrollbar-width: thin;
+}
+
+.stats-grid > .stat,
+.stats-grid > .mini-panel {
+  flex: 0 0 150px;
+  min-width: 150px;
 }
 
 .stat {
   background: var(--panel-alt);
   border-radius: 10px;
-  padding: .75rem;
+  padding: .55rem;
   display: grid;
 }
 
 .stat-label {
   display: inline-flex;
   align-items: center;
-  gap: .45rem;
+  gap: .3rem;
+  font-size: .8rem;
 }
 
 .icon-badge {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  width: 1.45rem;
-  height: 1.45rem;
+  width: 1.1rem;
+  height: 1.1rem;
   border-radius: 999px;
   background: linear-gradient(145deg, #334155, #1f2937);
   border: 1px solid #475569;
-  font-size: .9rem;
+  font-size: .72rem;
 }
 
 .stat strong {
-  font-size: 1.25rem;
+  font-size: 1.05rem;
 }
 
 .card-grid {
@@ -237,6 +246,10 @@ button {
   animation: tap-splash .24s ease-out;
 }
 
+.splash-btn.tap-splash {
+  transform: translateY(1px);
+}
+
 @keyframes tap-splash {
   0% {
     opacity: .65;
@@ -245,7 +258,7 @@ button {
 
   100% {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(9);
+    transform: translate(-50%, -50%) scale(6);
   }
 }
 
@@ -317,16 +330,10 @@ button {
   gap: .75rem;
 }
 
-.header-indicators {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: .65rem;
-}
-
 .mini-panel {
   border: 1px solid #475569;
   border-radius: 10px;
-  padding: .6rem .7rem;
+  padding: .5rem .55rem;
   background: linear-gradient(145deg, #1b2638, #1d2b3f);
 }
 
@@ -337,6 +344,8 @@ button {
 
 .strategy-panel {
   text-align: center;
+  min-width: 165px;
+  flex-basis: 165px;
 }
 
 .strategy-panel .mini-label {
@@ -365,10 +374,10 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.65rem;
-  height: 1.65rem;
+  width: 1.2rem;
+  height: 1.2rem;
   border-radius: 999px;
-  font-size: .95rem;
+  font-size: .7rem;
   background: radial-gradient(circle at 30% 20%, #7dd3fc, #38bdf8 45%, #0ea5e9 100%);
   border: 1px solid #7dd3fc;
   box-shadow: 0 0 0 1px rgba(125, 211, 252, .18), 0 3px 10px rgba(56, 189, 248, .25);
