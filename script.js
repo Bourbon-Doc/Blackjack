@@ -27,6 +27,8 @@ const els = {
   perfectStrategy: document.getElementById("perfectStrategy"),
   cardGrid: document.getElementById("cardGrid"),
   quickSections: document.getElementById("quickSections"),
+  rulesSidebar: document.getElementById("rulesSidebar"),
+  toggleSidebar: document.getElementById("toggleSidebar"),
   burnPile: document.getElementById("burnPile"),
   resetShoe: document.getElementById("resetShoe"),
   undoLastCard: document.getElementById("undoLastCard"),
@@ -86,19 +88,53 @@ function undoLastCard() {
 }
 
 function recommendStrategies(tc, penetrationPct) {
-  const rulesSuffix = `${els.h17.checked ? "H17" : "S17"}, ${els.das.checked ? "DAS" : "No DAS"}, payout ${els.payout.value}`;
-  if (tc >= 3) {
-    els.bookStrategy.textContent = `Book: Press advantage bets; use index deviations (${rulesSuffix}).`;
-    els.perfectStrategy.textContent = `Perfect: Max edge spots${els.doubleAllowed.checked ? ", including high-EV doubles" : ""}, and prioritize side-bets when suited patterns remain rich.`;
-    return;
+  const canSplit = Number(els.splitsAllowed.value) > 0;
+  const canDouble = els.doubleAllowed.checked;
+  const canSurrender = els.surrender.checked;
+  let bookAction = "Stand";
+  let perfectAction = "Stand";
+
+  if (tc <= -2 || penetrationPct < 35) {
+    bookAction = "Hit";
+  } else if (tc >= 3 && canSplit) {
+    bookAction = "Split";
+  } else if (tc >= 1 && canDouble) {
+    bookAction = "Double";
   }
-  if (tc >= 1) {
-    els.bookStrategy.textContent = `Book: Slight bet increase, normal deviations only (${rulesSuffix}).`;
-    els.perfectStrategy.textContent = `Perfect: Selective bet ramp; avoid weak side-bet exposure${Number(els.splitsAllowed.value) > 1 ? ", preserve split flexibility" : ""}.`;
-    return;
+
+  if (tc <= -3 || penetrationPct < 30) {
+    perfectAction = "Hit";
+  } else if (tc >= 4 && canSurrender) {
+    perfectAction = "Surrender";
+  } else if (tc >= 2 && canSplit) {
+    perfectAction = "Split";
+  } else if (tc >= 1 && canDouble) {
+    perfectAction = "Double";
   }
-  els.bookStrategy.textContent = `Book: Flat/minimum bets and strict basic strategy (${rulesSuffix}).`;
-  els.perfectStrategy.textContent = penetrationPct > 65 ? "Perfect: Wait for stronger count swings before increasing risk." : "Perfect: Stay conservative until deeper shoe information is available.";
+
+  if (tc >= 5 && !canSplit && !canDouble) {
+    bookAction = "Stand";
+    perfectAction = canSurrender ? "Surrender" : "Stand";
+  }
+
+  if (tc <= -1 && !canDouble && !canSplit) {
+    bookAction = "Hit";
+    perfectAction = "Hit";
+  }
+
+  els.bookStrategy.textContent = bookAction;
+  els.perfectStrategy.textContent = perfectAction;
+}
+
+function toggleSidebar() {
+  const collapsed = els.rulesSidebar.classList.toggle("collapsed");
+  els.toggleSidebar.setAttribute("aria-expanded", String(!collapsed));
+  els.toggleSidebar.textContent = collapsed ? "Expand" : "Collapse";
+}
+
+function setQuickSuitSelection(suitRow, activeBtn) {
+  for (const b of suitRow.querySelectorAll("button")) b.classList.remove("good");
+  activeBtn.classList.add("good");
 }
 
 function combinations(n, k) {
@@ -273,8 +309,7 @@ function createQuickSections() {
       if (i === 0) btn.classList.add("good");
       btn.addEventListener("click", () => {
         selectedSuit = SUIT_KEYS[i];
-        for (const b of suitRow.querySelectorAll("button")) b.classList.remove("good");
-        btn.classList.add("good");
+        setQuickSuitSelection(suitRow, btn);
       });
       suitRow.append(btn);
     });
@@ -295,6 +330,7 @@ createCardGrid();
 createQuickSections();
 els.resetShoe.addEventListener("click", resetShoe);
 els.undoLastCard.addEventListener("click", undoLastCard);
+els.toggleSidebar.addEventListener("click", toggleSidebar);
 ["deckCount", "penetrationAlert", "surrender", "insuranceAllowed", "h17", "das", "doubleAllowed", "payout", "splitsAllowed"].forEach((id) => {
   document.getElementById(id).addEventListener("change", () => {
     if (id === "deckCount") resetShoe();

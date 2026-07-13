@@ -11,21 +11,24 @@
       <header class="top-header panel">
         <h1>Hi-Opt II Blackjack Counter</h1>
         <div class="header-actions">
-          <button id="undoLastCard">Undo Last Card</button>
-          <button id="resetShoe" class="danger">Reset Shoe</button>
+          <button id="undoLastCard" class="action-btn">Undo Last Card</button>
+          <button id="resetShoe" class="danger action-btn">Reset Shoe</button>
         </div>
       </header>
 
       <section class="panel stats sticky-stats">
-        <div class="stat"><span>🧮 Running Count</span><strong id="runningCount">0</strong></div>
-        <div class="stat"><span>🎯 True Count</span><strong id="trueCount">0.00</strong></div>
-        <div class="stat"><span>Cards Remaining</span><strong id="cardsRemaining">312</strong></div>
-        <div class="stat"><span>Decks Remaining</span><strong id="decksRemaining">6.00</strong></div>
+        <div class="stat"><span class="stat-label"><span class="icon-badge">🧮</span>Running Count</span><strong id="runningCount">0</strong></div>
+        <div class="stat"><span class="stat-label"><span class="icon-badge">🎯</span>True Count</span><strong id="trueCount">0.00</strong></div>
+        <div class="stat"><span class="stat-label"><span class="icon-badge">🂠</span>Cards Remaining</span><strong id="cardsRemaining">312</strong></div>
+        <div class="stat"><span class="stat-label"><span class="icon-badge">🃏</span>Decks Remaining</span><strong id="decksRemaining">6.00</strong></div>
       </section>
 
       <div class="layout">
-        <aside class="panel rules sidebar">
-          <h2>Rules & Shoe Settings</h2>
+        <aside id="rulesSidebar" class="panel rules sidebar">
+          <div class="sidebar-header">
+            <h2>Rules & Shoe Settings</h2>
+            <button id="toggleSidebar" type="button" aria-expanded="true">Collapse</button>
+          </div>
           <div class="rule-grid">
             <label>Decks
               <input id="deckCount" type="number" min="1" max="8" value="6" />
