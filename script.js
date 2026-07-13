@@ -233,6 +233,16 @@ function setQuickSuitSelection(suitRow, activeBtn) {
   activeBtn.classList.add("good");
 }
 
+function addTapSplash(button) {
+  button.classList.add("splash-btn");
+  button.addEventListener("click", () => {
+    button.classList.remove("tap-splash");
+    void button.offsetWidth;
+    button.classList.add("tap-splash");
+    window.setTimeout(() => button.classList.remove("tap-splash"), 240);
+  });
+}
+
 function combinations(n, k) {
   if (k < 0 || n < k) return 0;
   if (k === 0 || n === k) return 1;
@@ -404,6 +414,7 @@ function createCardGrid() {
       button.className = "card-btn";
       button.dataset.key = key;
       button.innerHTML = `<strong>${rank}${SUITS[s]}</strong><small></small>`;
+      addTapSplash(button);
       button.addEventListener("click", () => removeCard(rank, SUIT_KEYS[s], "Suit Tap"));
       cards.append(button);
     }
@@ -433,6 +444,7 @@ function createQuickSections() {
     SUITS.forEach((suit, i) => {
       const btn = document.createElement("button");
       btn.textContent = suit;
+      addTapSplash(btn);
       if (i === 0) btn.classList.add("good");
       btn.addEventListener("click", () => {
         selectedSuit = SUIT_KEYS[i];
@@ -444,6 +456,7 @@ function createQuickSections() {
     RANKS.forEach((rank) => {
       const btn = document.createElement("button");
       btn.textContent = rank;
+      addTapSplash(btn);
       btn.addEventListener("click", () => removeCard(rank, selectedSuit, section));
       rankRow.append(btn);
     });

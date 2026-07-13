@@ -213,6 +213,42 @@ button {
   color: var(--muted);
 }
 
+.splash-btn {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.splash-btn::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: .6rem;
+  height: .6rem;
+  border-radius: 999px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0);
+  background: radial-gradient(circle, rgba(125, 211, 252, .55) 0%, rgba(56, 189, 248, .28) 45%, rgba(56, 189, 248, 0) 70%);
+}
+
+.splash-btn.tap-splash::after {
+  animation: tap-splash .24s ease-out;
+}
+
+@keyframes tap-splash {
+  0% {
+    opacity: .65;
+    transform: translate(-50%, -50%) scale(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(9);
+  }
+}
+
 .quick-wrap {
   display: grid;
   gap: .65rem;
