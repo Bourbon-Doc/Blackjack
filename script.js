@@ -18,7 +18,7 @@ const els = {
   trueCount: document.getElementById("trueCount"),
   cardsRemaining: document.getElementById("cardsRemaining"),
   decksRemaining: document.getElementById("decksRemaining"),
-  penetrationStatus: document.getElementById("penetrationStatus"),
+  penetrationHeader: document.getElementById("penetrationHeader"),
   insuranceStatus: document.getElementById("insuranceStatus"),
   surrenderStatus: document.getElementById("surrenderStatus"),
   pairSignal: document.getElementById("pairSignal"),
@@ -168,9 +168,8 @@ function updateSignals() {
   els.trueCount.textContent = tc.toFixed(2);
   els.cardsRemaining.textContent = String(remaining);
   els.decksRemaining.textContent = (remaining / 52).toFixed(2);
-
-  els.penetrationStatus.className = penetrationPct >= threshold ? "good" : "warn";
-  els.penetrationStatus.textContent = `Shoe penetration: ${penetrationPct.toFixed(1)}% (alert at ${threshold}%).`;
+  els.penetrationHeader.className = penetrationPct >= threshold ? "good" : "warn";
+  els.penetrationHeader.textContent = `${penetrationPct.toFixed(1)}%`;
 
   if (els.insuranceAllowed.checked) {
     const insuranceGood = tc >= 3;
