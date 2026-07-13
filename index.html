@@ -11,6 +11,7 @@
       <header class="top-header panel">
         <h1>Hi-Opt II Blackjack Counter</h1>
         <div class="header-actions">
+          <button id="toggleSidebar" type="button" class="action-btn">Hide Sidebar</button>
           <button id="undoLastCard" class="action-btn">Undo Last Card</button>
           <button id="resetShoe" class="danger action-btn">Reset Shoe</button>
         </div>
@@ -27,7 +28,6 @@
         <aside id="rulesSidebar" class="panel rules sidebar">
           <div class="sidebar-header">
             <h2>Rules & Shoe Settings</h2>
-            <button id="toggleSidebar" type="button" aria-expanded="true">Collapse</button>
           </div>
           <div class="rule-grid">
             <label>Decks
@@ -74,6 +74,7 @@
 
             <section class="panel side-bets">
               <h2>Side Bet Tracker</h2>
+              <p id="sideBetBest"></p>
               <p id="pairSignal"></p>
               <p id="rummySignal"></p>
               <p id="luckySignal"></p>
