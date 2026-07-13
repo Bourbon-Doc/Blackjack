@@ -18,10 +18,15 @@ body {
   font-family: Inter, system-ui, -apple-system, Segoe UI, sans-serif;
   background: linear-gradient(150deg, #0b1220, #111827 45%, #0f172a);
   color: var(--text);
+  overflow-x: hidden;
+}
+
+html {
+  overflow-x: hidden;
 }
 
 .app {
-  width: 100%;
+  width: min(1380px, 100%);
   max-width: 1380px;
   margin: 0 auto;
   padding: 1rem;
@@ -35,6 +40,7 @@ body {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: .75rem;
+  min-width: 0;
 }
 
 .top-header h1 {
@@ -46,11 +52,12 @@ body {
   display: flex;
   gap: .5rem;
   flex-wrap: wrap;
+  min-width: 0;
 }
 
 .action-btn {
   min-height: 46px;
-  min-width: 142px;
+  min-width: clamp(108px, 16vw, 142px);
   font-weight: 700;
   font-size: 1rem;
 }
@@ -68,6 +75,7 @@ body {
   gap: 1rem;
   grid-template-columns: minmax(260px, var(--sidebar-width)) minmax(0, 1fr);
   align-items: start;
+  min-width: 0;
   transition: grid-template-columns .25s ease, gap .25s ease;
 }
 
@@ -79,6 +87,7 @@ body {
 .main-content {
   display: grid;
   gap: 1rem;
+  min-width: 0;
 }
 
 .sidebar {
@@ -113,6 +122,7 @@ body {
 .sticky-stats {
   position: sticky;
   top: 0;
+  align-self: start;
   z-index: 20;
   backdrop-filter: blur(6px);
 }
@@ -313,6 +323,7 @@ button {
   gap: .7rem;
   align-items: center;
   margin-bottom: .8rem;
+  min-width: 0;
 }
 
 .quick-hand-bar p {
@@ -329,6 +340,7 @@ button {
   gap: .55rem;
   flex-wrap: wrap;
   justify-content: flex-end;
+  min-width: 0;
 }
 
 .quick-hand-actions .action-btn {
