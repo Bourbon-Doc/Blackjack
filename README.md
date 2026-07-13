@@ -18,4 +18,5 @@ This project is a static site:
 - Insurance and surrender indicator hints
 - Side-bet helper signals for pairs, rummy-style sequences, and lucky trinity patterns
 - Burn card pile with card + source section history
+- Undo button for the most recently added card
 - Quick tap lanes for player, dealer, and other players

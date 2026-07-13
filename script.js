@@ -29,6 +29,7 @@ const els = {
   quickSections: document.getElementById("quickSections"),
   burnPile: document.getElementById("burnPile"),
   resetShoe: document.getElementById("resetShoe"),
+  undoLastCard: document.getElementById("undoLastCard"),
   surrender: document.getElementById("surrender"),
   insuranceAllowed: document.getElementById("insuranceAllowed"),
   h17: document.getElementById("h17"),
@@ -71,6 +72,16 @@ function removeCard(rank, suitKey, source) {
   state.runningCount += HI_OPT_II[rank];
   state.cardsSeen += 1;
   state.burnPile.unshift({ key, source });
+  render();
+}
+
+function undoLastCard() {
+  const lastCard = state.burnPile.shift();
+  if (!lastCard) return;
+  const rank = lastCard.key.slice(0, -1);
+  state.perCardRemaining[lastCard.key] += 1;
+  state.runningCount -= HI_OPT_II[rank];
+  state.cardsSeen = Math.max(0, state.cardsSeen - 1);
   render();
 }
 
@@ -206,6 +217,7 @@ function renderCards() {
 }
 
 function render() {
+  els.undoLastCard.disabled = state.burnPile.length === 0;
   renderCards();
   renderBurnPile();
   updateSignals();
@@ -271,6 +283,7 @@ function createQuickSections() {
 createCardGrid();
 createQuickSections();
 els.resetShoe.addEventListener("click", resetShoe);
+els.undoLastCard.addEventListener("click", undoLastCard);
 ["deckCount", "penetrationAlert", "surrender", "insuranceAllowed", "h17", "das", "doubleAllowed", "payout", "splitsAllowed"].forEach((id) => {
   document.getElementById(id).addEventListener("change", () => {
     if (id === "deckCount") resetShoe();
