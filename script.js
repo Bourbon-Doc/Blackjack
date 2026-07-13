@@ -13,6 +13,7 @@ const state = {
 const els = {
   deckCount: document.getElementById("deckCount"),
   penetrationAlert: document.getElementById("penetrationAlert"),
+  layout: document.querySelector(".layout"),
   runningCount: document.getElementById("runningCount"),
   trueCount: document.getElementById("trueCount"),
   cardsRemaining: document.getElementById("cardsRemaining"),
@@ -23,6 +24,7 @@ const els = {
   pairSignal: document.getElementById("pairSignal"),
   rummySignal: document.getElementById("rummySignal"),
   luckySignal: document.getElementById("luckySignal"),
+  sideBetBest: document.getElementById("sideBetBest"),
   bookStrategy: document.getElementById("bookStrategy"),
   perfectStrategy: document.getElementById("perfectStrategy"),
   cardGrid: document.getElementById("cardGrid"),
@@ -127,9 +129,10 @@ function recommendStrategies(tc, penetrationPct) {
 }
 
 function toggleSidebar() {
-  const collapsed = els.rulesSidebar.classList.toggle("collapsed");
+  const collapsed = els.layout.classList.toggle("sidebar-collapsed");
+  els.rulesSidebar.classList.toggle("collapsed", collapsed);
   els.toggleSidebar.setAttribute("aria-expanded", String(!collapsed));
-  els.toggleSidebar.textContent = collapsed ? "Expand" : "Collapse";
+  els.toggleSidebar.textContent = collapsed ? "Show Sidebar" : "Hide Sidebar";
 }
 
 function setQuickSuitSelection(suitRow, activeBtn) {
@@ -149,6 +152,10 @@ function rankValue(rank) {
   if (rank === "A") return 1;
   if (["10", "J", "Q", "K"].includes(rank)) return 10;
   return Number(rank);
+}
+
+function percent(value) {
+  return `${(value * 100).toFixed(2)}%`;
 }
 
 function updateSignals() {
@@ -187,8 +194,10 @@ function updateSignals() {
   for (const suit of SUIT_KEYS) {
     for (const rank of RANKS) rankTotals[rank] += state.perCardRemaining[`${rank}${suit}`];
   }
-  const topPairRank = Object.entries(rankTotals).sort((a, b) => b[1] - a[1])[0];
-  els.pairSignal.textContent = `Pairs signal: strongest remaining pair rank is ${topPairRank[0]} (${topPairRank[1]} cards left).`;
+  const pairWays = Object.values(rankTotals).reduce((sum, count) => sum + combinations(count, 2), 0);
+  const totalTwoCardHands = combinations(remaining, 2);
+  const pairProbability = totalTwoCardHands > 0 ? pairWays / totalTwoCardHands : 0;
+  els.pairSignal.textContent = `Pairs hit chance: ${percent(pairProbability)} (${pairWays} favorable two-card combinations).`;
 
   const rummyRuns = [
     ["6", "7", "8"],
@@ -196,18 +205,26 @@ function updateSignals() {
     ["8", "9", "10"],
   ];
   let bestRun = { label: "6-7-8", score: 0 };
+  let rummyWays = 0;
   for (const run of rummyRuns) {
     let score = 0;
     for (const suit of SUIT_KEYS) {
+      const waysForSuit =
+        state.perCardRemaining[`${run[0]}${suit}`] *
+        state.perCardRemaining[`${run[1]}${suit}`] *
+        state.perCardRemaining[`${run[2]}${suit}`];
       score += Math.min(
         state.perCardRemaining[`${run[0]}${suit}`],
         state.perCardRemaining[`${run[1]}${suit}`],
         state.perCardRemaining[`${run[2]}${suit}`]
       );
+      rummyWays += waysForSuit;
     }
     if (score > bestRun.score) bestRun = { label: run.join("-"), score };
   }
-  els.rummySignal.textContent = `Rummy signal: best suited run ${bestRun.label} has ${bestRun.score} live combinations.`;
+  const totalThreeCardHands = combinations(remaining, 3);
+  const rummyProbability = totalThreeCardHands > 0 ? rummyWays / totalThreeCardHands : 0;
+  els.rummySignal.textContent = `Rummy hit chance: ${percent(rummyProbability)} (best live suited run ${bestRun.label}).`;
 
   const luckyTotals = { 19: 0, 20: 0, 21: 0 };
   for (const suit of SUIT_KEYS) {
@@ -229,7 +246,18 @@ function updateSignals() {
       }
     }
   }
-  els.luckySignal.textContent = `Lucky Trinity signal: 19=${luckyTotals[19]}, 20=${luckyTotals[20]}, 21=${luckyTotals[21]} suited 3-card combinations still live.`;
+  const luckyWays = luckyTotals[19] + luckyTotals[20] + luckyTotals[21];
+  const luckyProbability = totalThreeCardHands > 0 ? luckyWays / totalThreeCardHands : 0;
+  els.luckySignal.textContent = `Lucky Trinity hit chance: ${percent(luckyProbability)} (19=${luckyTotals[19]}, 20=${luckyTotals[20]}, 21=${luckyTotals[21]}).`;
+
+  const sideBetProbabilities = [
+    { label: "Pairs", probability: pairProbability },
+    { label: "Rummy", probability: rummyProbability },
+    { label: "Lucky Trinity", probability: luckyProbability },
+  ];
+  sideBetProbabilities.sort((a, b) => b.probability - a.probability);
+  const bestSideBet = sideBetProbabilities[0];
+  els.sideBetBest.textContent = `Multi-count side-bet edge: ${bestSideBet.label} is highest right now at ${percent(bestSideBet.probability)}.`;
 
   recommendStrategies(tc, penetrationPct);
 }
