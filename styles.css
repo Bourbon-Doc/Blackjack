@@ -1,0 +1,139 @@
+:root {
+  color-scheme: dark;
+  --bg: #111827;
+  --panel: #1f2937;
+  --panel-alt: #273449;
+  --text: #f3f4f6;
+  --muted: #9ca3af;
+  --accent: #38bdf8;
+  --good: #34d399;
+  --warn: #f59e0b;
+  --bad: #f87171;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, sans-serif;
+  background: linear-gradient(150deg, #0b1220, #111827 45%, #0f172a);
+  color: var(--text);
+}
+
+.app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  display: grid;
+  gap: 1rem;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.rule-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: .75rem;
+}
+
+label {
+  display: grid;
+  gap: .25rem;
+  color: var(--muted);
+}
+
+input, select, button {
+  background: var(--panel-alt);
+  color: var(--text);
+  border: 1px solid #475569;
+  border-radius: 8px;
+  padding: .4rem .55rem;
+}
+
+button {
+  cursor: pointer;
+}
+
+.danger {
+  border-color: #ef4444;
+  color: #fecaca;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: .75rem;
+}
+
+.stat {
+  background: var(--panel-alt);
+  border-radius: 10px;
+  padding: .75rem;
+  display: grid;
+}
+
+.stat strong {
+  font-size: 1.25rem;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+  gap: .45rem;
+}
+
+.card-btn {
+  display: grid;
+  padding: .45rem;
+  gap: .15rem;
+  text-align: center;
+  border: 1px solid #475569;
+}
+
+.card-btn small {
+  color: var(--muted);
+}
+
+.quick-wrap {
+  display: grid;
+  gap: .5rem;
+  margin-bottom: .75rem;
+}
+
+.quick-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem;
+}
+
+.quick-row button {
+  min-width: 42px;
+}
+
+.recommendations {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: .75rem;
+}
+
+#burnPile {
+  margin: 0;
+  padding-left: 1.1rem;
+  max-height: 260px;
+  overflow: auto;
+}
+
+.good { color: var(--good); }
+.warn { color: var(--warn); }
+.bad { color: var(--bad); }

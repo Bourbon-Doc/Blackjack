@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hi-Opt II Blackjack Counter</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header>
+        <h1>Hi-Opt II Blackjack Counter</h1>
+        <button id="resetShoe" class="danger">Reset Shoe</button>
+      </header>
+
+      <section class="panel rules">
+        <h2>Rules & Shoe Settings</h2>
+        <div class="rule-grid">
+          <label>Decks
+            <input id="deckCount" type="number" min="1" max="8" value="6" />
+          </label>
+          <label>DAS <input id="das" type="checkbox" checked /></label>
+          <label>Surrender <input id="surrender" type="checkbox" checked /></label>
+          <label>Dealer Hits Soft 17 <input id="h17" type="checkbox" /></label>
+          <label>Double <input id="doubleAllowed" type="checkbox" checked /></label>
+          <label>Insurance <input id="insuranceAllowed" type="checkbox" checked /></label>
+          <label>Payout
+            <select id="payout">
+              <option value="3:2" selected>3:2</option>
+              <option value="2:1">2:1</option>
+            </select>
+          </label>
+          <label>Splits Allowed
+            <input id="splitsAllowed" type="number" min="0" max="4" value="3" />
+          </label>
+          <label>Penetration Alert %
+            <input id="penetrationAlert" type="number" min="10" max="95" value="75" />
+          </label>
+        </div>
+      </section>
+
+      <section class="panel stats">
+        <div class="stat"><span>🧮 Running Count</span><strong id="runningCount">0</strong></div>
+        <div class="stat"><span>🎯 True Count</span><strong id="trueCount">0.00</strong></div>
+        <div class="stat"><span>Cards Remaining</span><strong id="cardsRemaining">312</strong></div>
+        <div class="stat"><span>Decks Remaining</span><strong id="decksRemaining">6.00</strong></div>
+      </section>
+
+      <section class="panel indicators">
+        <h2>Indicators & Strategy</h2>
+        <p id="penetrationStatus"></p>
+        <p id="insuranceStatus"></p>
+        <p id="surrenderStatus"></p>
+        <div class="recommendations">
+          <div>
+            <h3>Book Strategy</h3>
+            <p id="bookStrategy"></p>
+          </div>
+          <div>
+            <h3>Perfect Strategy</h3>
+            <p id="perfectStrategy"></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Suit-Aware Card Tap</h2>
+        <div id="cardGrid" class="card-grid"></div>
+      </section>
+
+      <section class="panel quick-sections">
+        <h2>Quick Tap Sections</h2>
+        <div id="quickSections"></div>
+      </section>
+
+      <section class="panel side-bets">
+        <h2>Side Bet Tracker</h2>
+        <p id="pairSignal"></p>
+        <p id="rummySignal"></p>
+        <p id="luckySignal"></p>
+      </section>
+
+      <section class="panel burn">
+        <h2>Burn Card Pile</h2>
+        <ul id="burnPile"></ul>
+      </section>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
