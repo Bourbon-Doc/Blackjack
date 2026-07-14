@@ -420,39 +420,6 @@ function updateSignals() {
     ? `Best edge to bet: ${bestEdge.label} at ${formatPct(bestEdge.pct)} (${formatEdge(bestEdge.pct, bestEdge.pct - bestEdge.edge)}).`
     : "No positive side-bet edge vs fresh shoe right now.";
 
-  const openingCards = getOpeningSideBetCards();
-  if (!openingCards) return;
-
-  const [playerOne, playerTwo, dealerUp] = openingCards;
-  const openingRanks = openingCards.map((card) => card.slice(0, -1));
-  const openingSuits = openingCards.map((card) => card.slice(-1));
-  const isPairHit = openingRanks[0] === openingRanks[1];
-  const isRummyHit = isThreeCardRummy(openingRanks);
-  const isSameSuitRummy = isRummyHit && openingSuits.every((suit) => suit === openingSuits[0]);
-  const luckyTotal = openingRanks.reduce((sum, rank) => sum + rankValue(rank), 0);
-  const isLuckyHit = [19, 20, 21].includes(luckyTotal);
-
-  const openingCardsLabel = `${cardLabelFromKey(playerOne)} ${cardLabelFromKey(playerTwo)} + ${cardLabelFromKey(dealerUp)}`;
-  els.pairSignal.textContent += isPairHit ? ` Current opening: HIT on ${openingCardsLabel}.` : ` Current opening: miss on ${openingCardsLabel}.`;
-  if (isRummyHit) {
-    els.rummySignal.textContent += isSameSuitRummy
-      ? ` Current opening: HIT (same-suit run) on ${openingCardsLabel}.`
-      : ` Current opening: HIT (run) on ${openingCardsLabel}.`;
-  } else {
-    els.rummySignal.textContent += ` Current opening: miss on ${openingCardsLabel}.`;
-  }
-  els.luckySignal.textContent += isLuckyHit
-    ? ` Current opening: HIT (${luckyTotal}) on ${openingCardsLabel}.`
-    : ` Current opening: miss (${luckyTotal}) on ${openingCardsLabel}.`;
-
-  const hitLabels = [];
-  if (isPairHit) hitLabels.push("Pairs");
-  if (isRummyHit) hitLabels.push(isSameSuitRummy ? "Same-Suit Rummy" : "Rummy");
-  if (isLuckyHit) hitLabels.push("Lucky Trinity");
-  els.sideBetBest.textContent += hitLabels.length
-    ? ` Opening-card hits: ${hitLabels.join(", ")}.`
-    : " Opening-card hits: none.";
-
 }
 
 function renderBurnPile() {
