@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hi-Opt II Blackjack Counter</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="top-header panel">
+        <h1>Hi-Opt II Blackjack Counter</h1>
+        <div class="header-actions">
+          <button id="toggleSidebar" type="button" class="action-btn">Hide Sidebar</button>
+          <button id="undoLastCard" class="action-btn">Undo Last Card</button>
+          <button id="resetShoe" class="danger action-btn">Reset Shoe</button>
+        </div>
+      </header>
+
+      <section class="panel stats sticky-stats">
+        <div class="stats-grid">
+          <div class="mini-panel stat-panel"><span class="mini-label"><span class="pretty-icon">🧮</span>Running Count</span><p id="runningCount">0</p></div>
+          <div class="mini-panel stat-panel"><span class="mini-label"><span class="pretty-icon">🎯</span>True Count</span><p id="trueCount">0.00</p></div>
+          <div class="mini-panel stat-panel"><span class="mini-label"><span class="pretty-icon">🂠</span>Cards Remaining</span><p id="cardsRemaining">312</p></div>
+          <div class="mini-panel stat-panel"><span class="mini-label"><span class="pretty-icon">🃏</span>Decks Remaining</span><p id="decksRemaining">6.00</p></div>
+          <div class="mini-panel stat-panel"><span class="mini-label"><span class="pretty-icon">📉</span>Shoe Penetration</span><p id="penetrationHeader">0.0%</p></div>
+          <div class="mini-panel">
+            <span class="mini-label"><span class="pretty-icon">🛡️</span>Insurance</span>
+            <p id="insuranceStatus"></p>
+          </div>
+          <div class="mini-panel">
+            <span class="mini-label"><span class="pretty-icon">🧭</span>Surrender</span>
+            <p id="surrenderStatus"></p>
+          </div>
+          <div class="mini-panel strategy-panel">
+            <span class="mini-label"><span class="pretty-icon">📘</span>Book Strategy</span>
+            <p id="bookStrategy" class="strategy-value"></p>
+          </div>
+          <div class="mini-panel strategy-panel">
+            <span class="mini-label"><span class="pretty-icon">🧠</span>Perfect Strategy</span>
+            <p id="perfectStrategy" class="strategy-value"></p>
+          </div>
+        </div>
+      </section>
+
+      <div class="layout">
+        <aside id="rulesSidebar" class="panel rules sidebar">
+          <div class="sidebar-header">
+            <h2>Rules & Shoe Settings</h2>
+          </div>
+          <div class="rule-grid">
+            <label>Decks
+              <input id="deckCount" type="number" min="1" max="8" value="6" />
+            </label>
+            <label>DAS <input id="das" type="checkbox" checked /></label>
+            <label>Surrender <input id="surrender" type="checkbox" checked /></label>
+            <label>Dealer Hits Soft 17 <input id="h17" type="checkbox" /></label>
+            <label>Double <input id="doubleAllowed" type="checkbox" checked /></label>
+            <label>Insurance <input id="insuranceAllowed" type="checkbox" checked /></label>
+            <label>Payout
+              <select id="payout">
+                <option value="3:2" selected>3:2</option>
+                <option value="2:1">2:1</option>
+              </select>
+            </label>
+            <label>Splits Allowed
+              <input id="splitsAllowed" type="number" min="0" max="4" value="3" />
+            </label>
+            <label>Penetration Alert %
+              <input id="penetrationAlert" type="number" min="10" max="95" value="75" />
+            </label>
+          </div>
+        </aside>
+
+        <div class="main-content">
+          <section class="panel side-bets">
+            <h2><span class="pretty-icon">🎲</span>Side Bet Tracker</h2>
+            <div class="side-bet-grid">
+              <div class="mini-panel">
+                <span class="mini-label"><span class="pretty-icon">🏆</span>Best Edge</span>
+                <p id="sideBetBest"></p>
+              </div>
+              <div class="mini-panel">
+                <span class="mini-label"><span class="pretty-icon">🂱</span>Pairs</span>
+                <p id="pairSignal"></p>
+              </div>
+              <div class="mini-panel">
+                <span class="mini-label"><span class="pretty-icon">🎴</span>Rummy</span>
+                <p id="rummySignal"></p>
+              </div>
+              <div class="mini-panel">
+                <span class="mini-label"><span class="pretty-icon">✨</span>Lucky Trinity</span>
+                <p id="luckySignal"></p>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel quick-sections">
+            <h2>Quick Tap Sections</h2>
+            <div class="quick-hand-bar">
+              <p id="playerHandIndicator"></p>
+              <p id="dealerHandIndicator"></p>
+              <div class="quick-hand-actions">
+                <button id="nextHand" type="button" class="action-btn">Next Hand</button>
+                <button id="undoQuickCard" type="button" class="action-btn">Undo Card</button>
+              </div>
+            </div>
+            <div id="quickSections"></div>
+          </section>
+
+          <section class="panel">
+            <h2>Suit-Aware Card Tap</h2>
+            <div id="cardGrid" class="card-grid"></div>
+          </section>
+
+          <section class="panel burn">
+            <h2>Burn Card Pile</h2>
+            <ul id="burnPile"></ul>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
