@@ -264,6 +264,90 @@ function isThreeCardRummy(ranks) {
   return isRegularStraight || isHighAceStraight;
 }
 
+const sideBetBaselineCache = new Map();
+
+function buildCardPool(perCardRemaining) {
+  const pool = [];
+  for (const suit of SUIT_KEYS) {
+    for (const rank of RANKS) {
+      const key = `${rank}${suit}`;
+      const count = perCardRemaining[key] ?? 0;
+      if (count <= 0) continue;
+      pool.push({ rank, suit, value: rankValue(rank), count });
+    }
+  }
+  return pool;
+}
+
+function calculateSideBetProbabilities(pool, total) {
+  if (total < 3) return null;
+  const totalOutcomes = total * (total - 1) * (total - 2);
+  let pairOutcomes = 0;
+  let rummyOutcomes = 0;
+  let sameSuitRummyOutcomes = 0;
+  let luckyOutcomes = 0;
+
+  for (const first of pool) {
+    for (const second of pool) {
+      const secondAvailable = second.count - (second === first ? 1 : 0);
+      if (secondAvailable <= 0) continue;
+      for (const third of pool) {
+        const thirdAvailable = third.count - (third === first ? 1 : 0) - (third === second ? 1 : 0);
+        if (thirdAvailable <= 0) continue;
+
+        const ways = first.count * secondAvailable * thirdAvailable;
+        if (first.rank === second.rank) pairOutcomes += ways;
+
+        const ranks = [first.rank, second.rank, third.rank];
+        const isRummyHit = isThreeCardRummy(ranks);
+        if (isRummyHit) {
+          rummyOutcomes += ways;
+          if (first.suit === second.suit && second.suit === third.suit) sameSuitRummyOutcomes += ways;
+        }
+
+        const luckyTotal = first.value + second.value + third.value;
+        if (luckyTotal === 19 || luckyTotal === 20 || luckyTotal === 21) luckyOutcomes += ways;
+      }
+    }
+  }
+
+  return {
+    pairPct: pairOutcomes / totalOutcomes,
+    rummyPct: rummyOutcomes / totalOutcomes,
+    sameSuitRummyPct: sameSuitRummyOutcomes / totalOutcomes,
+    luckyPct: luckyOutcomes / totalOutcomes,
+  };
+}
+
+function getCurrentSideBetProbabilities() {
+  const total = cardsRemaining();
+  const pool = buildCardPool(state.perCardRemaining);
+  return calculateSideBetProbabilities(pool, total);
+}
+
+function getBaselineSideBetProbabilities(deckCount) {
+  if (sideBetBaselineCache.has(deckCount)) return sideBetBaselineCache.get(deckCount);
+  const fullShoe = {};
+  for (const suit of SUIT_KEYS) {
+    for (const rank of RANKS) {
+      fullShoe[`${rank}${suit}`] = deckCount;
+    }
+  }
+  const baseline = calculateSideBetProbabilities(buildCardPool(fullShoe), deckCount * 52);
+  sideBetBaselineCache.set(deckCount, baseline);
+  return baseline;
+}
+
+function formatPct(value) {
+  return `${(value * 100).toFixed(2)}%`;
+}
+
+function formatEdge(current, baseline) {
+  const delta = (current - baseline) * 100;
+  const sign = delta >= 0 ? "+" : "";
+  return `${sign}${delta.toFixed(2)}% vs fresh shoe`;
+}
+
 function updateSignals() {
   const remaining = cardsRemaining();
   const tc = trueCount();
@@ -302,14 +386,42 @@ function updateSignals() {
   els.playerHandIndicator.textContent = formatHandIndicator("Player", state.playerHand);
   els.dealerHandIndicator.textContent = formatHandIndicator("Dealer", state.dealerHand);
 
-  const openingCards = getOpeningSideBetCards();
-  if (!openingCards) {
-    els.pairSignal.textContent = "Pairs: waiting for player first 2 cards.";
-    els.rummySignal.textContent = "Rummy: waiting for player first 2 cards + dealer up card.";
-    els.luckySignal.textContent = "Lucky Trinity: waiting for opening 3 cards.";
-    els.sideBetBest.textContent = "Side bets evaluate only player first 2 cards and dealer up card.";
+  const sideBetProbabilities = getCurrentSideBetProbabilities();
+  const sideBetBaseline = getBaselineSideBetProbabilities(Number(els.deckCount.value));
+  if (!sideBetProbabilities || !sideBetBaseline) {
+    els.pairSignal.className = "warn";
+    els.rummySignal.className = "warn";
+    els.luckySignal.className = "warn";
+    els.sideBetBest.className = "warn";
+    els.pairSignal.textContent = "Pairs chance: waiting for at least 3 cards remaining.";
+    els.rummySignal.textContent = "Rummy chance: waiting for at least 3 cards remaining.";
+    els.luckySignal.textContent = "Lucky Trinity chance: waiting for at least 3 cards remaining.";
+    els.sideBetBest.textContent = "Side bet edge: waiting for enough cards in shoe.";
     return;
   }
+
+  const pairEdge = sideBetProbabilities.pairPct - sideBetBaseline.pairPct;
+  const rummyEdge = sideBetProbabilities.rummyPct - sideBetBaseline.rummyPct;
+  const luckyEdge = sideBetProbabilities.luckyPct - sideBetBaseline.luckyPct;
+  const bestEdge = [
+    { label: "Pairs", pct: sideBetProbabilities.pairPct, edge: pairEdge },
+    { label: "Rummy", pct: sideBetProbabilities.rummyPct, edge: rummyEdge },
+    { label: "Lucky Trinity", pct: sideBetProbabilities.luckyPct, edge: luckyEdge },
+  ].sort((a, b) => b.edge - a.edge)[0];
+
+  els.pairSignal.className = pairEdge >= 0 ? "good" : "warn";
+  els.rummySignal.className = rummyEdge >= 0 ? "good" : "warn";
+  els.luckySignal.className = luckyEdge >= 0 ? "good" : "warn";
+  els.sideBetBest.className = bestEdge.edge > 0 ? "good" : "warn";
+  els.pairSignal.textContent = `Pairs next opening: ${formatPct(sideBetProbabilities.pairPct)} (${formatEdge(sideBetProbabilities.pairPct, sideBetBaseline.pairPct)}).`;
+  els.rummySignal.textContent = `Rummy next opening: ${formatPct(sideBetProbabilities.rummyPct)} (same-suit ${formatPct(sideBetProbabilities.sameSuitRummyPct)}, ${formatEdge(sideBetProbabilities.rummyPct, sideBetBaseline.rummyPct)}).`;
+  els.luckySignal.textContent = `Lucky Trinity next opening: ${formatPct(sideBetProbabilities.luckyPct)} (${formatEdge(sideBetProbabilities.luckyPct, sideBetBaseline.luckyPct)}).`;
+  els.sideBetBest.textContent = bestEdge.edge > 0
+    ? `Best edge to bet: ${bestEdge.label} at ${formatPct(bestEdge.pct)} (${formatEdge(bestEdge.pct, bestEdge.pct - bestEdge.edge)}).`
+    : "No positive side-bet edge vs fresh shoe right now.";
+
+  const openingCards = getOpeningSideBetCards();
+  if (!openingCards) return;
 
   const [playerOne, playerTwo, dealerUp] = openingCards;
   const openingRanks = openingCards.map((card) => card.slice(0, -1));
@@ -321,27 +433,25 @@ function updateSignals() {
   const isLuckyHit = [19, 20, 21].includes(luckyTotal);
 
   const openingCardsLabel = `${cardLabelFromKey(playerOne)} ${cardLabelFromKey(playerTwo)} + ${cardLabelFromKey(dealerUp)}`;
-  els.pairSignal.textContent = isPairHit
-    ? `Pairs: HIT on ${openingCardsLabel}.`
-    : `Pairs: miss on ${openingCardsLabel}.`;
+  els.pairSignal.textContent += isPairHit ? ` Current opening: HIT on ${openingCardsLabel}.` : ` Current opening: miss on ${openingCardsLabel}.`;
   if (isRummyHit) {
-    els.rummySignal.textContent = isSameSuitRummy
-      ? `Rummy: HIT (same-suit run) on ${openingCardsLabel}.`
-      : `Rummy: HIT (run) on ${openingCardsLabel}.`;
+    els.rummySignal.textContent += isSameSuitRummy
+      ? ` Current opening: HIT (same-suit run) on ${openingCardsLabel}.`
+      : ` Current opening: HIT (run) on ${openingCardsLabel}.`;
   } else {
-    els.rummySignal.textContent = `Rummy: miss on ${openingCardsLabel}.`;
+    els.rummySignal.textContent += ` Current opening: miss on ${openingCardsLabel}.`;
   }
-  els.luckySignal.textContent = isLuckyHit
-    ? `Lucky Trinity: HIT (${luckyTotal}) on ${openingCardsLabel}.`
-    : `Lucky Trinity: miss (${luckyTotal}) on ${openingCardsLabel}.`;
+  els.luckySignal.textContent += isLuckyHit
+    ? ` Current opening: HIT (${luckyTotal}) on ${openingCardsLabel}.`
+    : ` Current opening: miss (${luckyTotal}) on ${openingCardsLabel}.`;
 
   const hitLabels = [];
   if (isPairHit) hitLabels.push("Pairs");
   if (isRummyHit) hitLabels.push(isSameSuitRummy ? "Same-Suit Rummy" : "Rummy");
   if (isLuckyHit) hitLabels.push("Lucky Trinity");
-  els.sideBetBest.textContent = hitLabels.length
-    ? `Opening-card hits: ${hitLabels.join(", ")}.`
-    : "Opening-card hits: none.";
+  els.sideBetBest.textContent += hitLabels.length
+    ? ` Opening-card hits: ${hitLabels.join(", ")}.`
+    : " Opening-card hits: none.";
 
 }
 
